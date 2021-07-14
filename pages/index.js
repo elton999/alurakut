@@ -99,7 +99,7 @@ export default function Home() {
 
           <ProfileRelationsBoxWrapper>
             <ul>
-              {comunidades.map((item) => {
+              {comunidades.splice(0, 6).map((item) => {
 
                 return (
                   <li key={item.id}>
@@ -117,7 +117,7 @@ export default function Home() {
           <ProfileRelationsBoxWrapper>
             <h2 className="smallTitle">Pessoas da Comunidade ({favoritesPerson.length})</h2>
             <ul>
-              {favoritesPerson.map((item) => {
+              {favoritesPerson.splice(0, 6).map((item) => {
 
                 return (
                   <li key={item}>
