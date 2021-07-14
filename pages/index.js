@@ -1,12 +1,24 @@
+import React from 'react';
 import MainGrid from '../src/components/MainGrid'
 import Box from '../src/components/Box'
-import { AlurakutMenu, OrkutNostalgicIconSet } from '../src/lib/AlurakutCommos'
+import { AlurakutMenu, AlurakutProfileSidebarMenuDefault, OrkutNostalgicIconSet } from '../src/lib/AlurakutCommos'
 import { ProfileRelationsBoxWrapper } from '../src/components/ProfileRelations';
 
 function ProfileSidebar(propriedades) {
   return (
-    <Box>
+    <Box as="aside">
       <img src={`https://github.com/${propriedades.gitHubUser}.png`} style={{ borderRadius: '8px' }} />
+      <hr />
+
+      <p>
+        <a className="boxLink" href={`https://github.com/${propriedades.gitHubUser}`}>
+          @{propriedades.gitHubUser}
+        </a>
+      </p>
+      <hr />
+
+      <AlurakutProfileSidebarMenuDefault />
+
     </Box>
   )
 }
@@ -14,6 +26,13 @@ function ProfileSidebar(propriedades) {
 
 export default function Home() {
   const gitHubUser = "elton999";
+
+  const [comunidades, setComunidades] = React.useState([{
+    id: '1234',
+    title: 'AluraKut',
+    image: 'http://placehold.it/300x300'
+  }]);
+
   const favoritesPerson = [
     'juunegreiros',
     'omariosouto',
@@ -35,15 +54,73 @@ export default function Home() {
             <h1>Bem Vindo(a)</h1>
             <OrkutNostalgicIconSet />
           </Box>
+
+          <Box>
+            <h2>O que você deseja fazer?</h2>
+            <form onSubmit={function handleCriarComunidade(e) {
+              e.preventDefault();
+              const dadosForm = new FormData(e.target);
+
+              setComunidades(
+                [
+                  ...comunidades,
+                  {
+                    id: new Date().toISOString(),
+                    title: dadosForm.get('title'),
+                    image: dadosForm.get('image')
+                  },
+
+                ]
+              );
+
+            }}>
+              <div>
+                <input
+                  placeholder="qual vai ser o nome da sua comunidade?"
+                  name="title"
+                  type="text"
+                  aria-label="qual vai ser o nome da sua comunidade?" />
+              </div>
+
+              <div>
+                <input
+                  placeholder="Coloque uma URL para usarmos de capa"
+                  name="image"
+                  aria-label="Coloque uma URL para usarmos de capa" />
+              </div>
+
+              <button>
+                Criar Comunidade
+              </button>
+            </form>
+          </Box>
         </div>
         <div className="profileRelationsArea" style={{ gridArea: 'profileRelationsArea' }}>
+
+          <ProfileRelationsBoxWrapper>
+            <ul>
+              {comunidades.map((item) => {
+
+                return (
+                  <li key={item.id}>
+                    <a href={`/users/${item.title}`} key={item.title}>
+                      <img src={item.image} />
+                      <span>{item.title}</span>
+                    </a>
+                  </li>
+                )
+
+              })}
+            </ul>
+          </ProfileRelationsBoxWrapper>
+
           <ProfileRelationsBoxWrapper>
             <h2 className="smallTitle">Pessoas da Comunidade ({favoritesPerson.length})</h2>
             <ul>
               {favoritesPerson.map((item) => {
 
                 return (
-                  <li>
+                  <li key={item}>
                     <a href={`/users/${item}`} key={item}>
                       <img src={`https://github.com/${item}.png`} />
                       <span>{item}</span>
