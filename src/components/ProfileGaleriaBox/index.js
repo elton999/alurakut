@@ -8,7 +8,7 @@ export function ProfileGaleriaBox({ props }) {
         <ProfileRelationsBoxWrapper>
             <h2 className="smallTitle">{props.title} ({props.items.length})</h2>
             <ul>
-                {props.items.splice(0, 6).map((item) => {
+                {props.items.slice(0, 6).map((item) => {
                     let isAPerson = typeof item === 'string';
                     return (
                         <li key={isAPerson ? item : item.id}>
