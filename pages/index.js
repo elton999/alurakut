@@ -30,8 +30,8 @@ export default function Home() {
 
   const [comunidades, setComunidades] = React.useState([{
     id: '1234',
-    title: 'AluraKut',
-    image: 'http://placehold.it/300x300'
+    login: 'AluraKut',
+    avatar_url: 'http://placehold.it/300x300'
   }]);
 
   const favoritesPerson = [
@@ -42,6 +42,19 @@ export default function Home() {
     'marcobrunodev',
     'felipefialho'
   ];
+
+  const [seguidores, setSeguidores] = React.useState([]);
+
+  React.useEffect(function () {
+    fetch('https://api.github.com/users/elton999/followers')
+      .then(function (respostaDoServidor) {
+        return respostaDoServidor.json();
+      })
+      .then(function (respostaCompleta) {
+        setSeguidores(respostaCompleta);
+      })
+  }, [])
+
 
   return (
     <>
@@ -67,8 +80,8 @@ export default function Home() {
                   ...comunidades,
                   {
                     id: new Date().toISOString(),
-                    title: dadosForm.get('title'),
-                    image: dadosForm.get('image')
+                    login: dadosForm.get('title'),
+                    avatar_url: dadosForm.get('image')
                   },
 
                 ]
@@ -98,6 +111,7 @@ export default function Home() {
         </div>
         <div className="profileRelationsArea" style={{ gridArea: 'profileRelationsArea' }}>
 
+          <ProfileGaleriaBox props={{ items: seguidores, title: 'Seguidores' }} />
           <ProfileGaleriaBox props={{ items: comunidades, title: 'Comunidades' }} />
           <ProfileGaleriaBox props={{ items: favoritesPerson, title: 'Pessoas da Comunidades' }} />
 
