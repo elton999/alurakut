@@ -13,7 +13,7 @@ export function ProfileGaleriaBox({ props }) {
                     return (
                         <li key={isAPerson ? item : item.id}>
                             <a href={`/users/${!isAPerson ? item : item.login}`} key={isAPerson ? item : item.login}>
-                                <img src={isAPerson ? `https://github.com/${item}.png` : item.avatar_url} />
+                                <img src={isAPerson ? `https://github.com/${item}.png` : (item.avatar_url != null ? item.avatar_url : item.avatarUrl)} />
                                 <span>{isAPerson ? item : item.login}</span>
                             </a>
                         </li>

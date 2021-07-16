@@ -28,11 +28,7 @@ function ProfileSidebar(propriedades) {
 export default function Home() {
   const gitHubUser = "elton999";
 
-  const [comunidades, setComunidades] = React.useState([{
-    id: '1234',
-    login: 'AluraKut',
-    avatar_url: 'http://placehold.it/300x300'
-  }]);
+  const [comunidades, setComunidades] = React.useState([]);
 
   const favoritesPerson = [
     'juunegreiros',
@@ -52,6 +48,28 @@ export default function Home() {
       })
       .then(function (respostaCompleta) {
         setSeguidores(respostaCompleta);
+      });
+
+    fetch('https://graphql.datocms.com/',
+      {
+        method: 'post',
+        headers: {
+          'Authorization': '8f3fc47b8f4c474ac5fed4f59a1fe9',
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }, body: JSON.stringify({
+          "query": `query {
+          allCommunities{
+            login
+            id
+            avatarUrl
+            creatorSlug
+          }
+        }` })
+      })
+      .then((resposta) => resposta.json())
+      .then((respostaCompleta) => {
+        setComunidades(respostaCompleta.data.allCommunities);
       })
   }, [])
 
@@ -75,18 +93,21 @@ export default function Home() {
               e.preventDefault();
               const dadosForm = new FormData(e.target);
 
-              setComunidades(
-                [
-                  ...comunidades,
+              fetch('/api/comunidades', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
                   {
-                    id: new Date().toISOString(),
                     login: dadosForm.get('title'),
                     avatar_url: dadosForm.get('image')
-                  },
-
-                ]
-              );
-
+                  }
+                )
+              }).then(async (response) => {
+                const dados = await response.json();
+                setComunidades([...comunidades, dados.register]);
+              })
             }}>
               <div>
                 <input
