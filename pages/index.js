@@ -3,6 +3,8 @@ import MainGrid from '../src/components/MainGrid'
 import Box from '../src/components/Box'
 import { AlurakutMenu, AlurakutProfileSidebarMenuDefault, OrkutNostalgicIconSet } from '../src/lib/AlurakutCommos'
 import { ProfileRelationsBoxWrapper } from '../src/components/ProfileRelations';
+import jwt from 'jsonwebtoken';
+import nookies from 'nookies';
 import ProfileGaleriaBox from '../src/components/ProfileGaleriaBox';
 
 function ProfileSidebar(propriedades) {
@@ -25,8 +27,8 @@ function ProfileSidebar(propriedades) {
 }
 
 
-export default function Home() {
-  const gitHubUser = "elton999";
+export default function Home(props) {
+  const gitHubUser = props.githubUser;
 
   const [comunidades, setComunidades] = React.useState([]);
 
@@ -42,7 +44,7 @@ export default function Home() {
   const [seguidores, setSeguidores] = React.useState([]);
 
   React.useEffect(function () {
-    fetch('https://api.github.com/users/elton999/following')
+    fetch(`https://api.github.com/users/${gitHubUser}/following`)
       .then(function (respostaDoServidor) {
         return respostaDoServidor.json();
       })
@@ -140,4 +142,33 @@ export default function Home() {
       </MainGrid>
     </>
   )
+}
+
+export async function getServerSideProps(context) {
+  const cookies = nookies.get(context)
+  const token = cookies.USER_TOKEN;
+
+  const { isAuthenticated } = await fetch('https://alurakut.vercel.app/api/auth', {
+    headers: {
+      Authorization: token
+    }
+  })
+    .then((resposta) => resposta.json())
+
+  if (!isAuthenticated) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false
+      }
+    }
+  }
+
+  const { githubUser } = jwt.decode(token);
+
+  return {
+    props: {
+      githubUser
+    },
+  }
 }
